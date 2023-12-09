@@ -13,6 +13,17 @@ def selection(curr_node, playColor, whosMove):
     if(not curr_node.children):
         return curr_node
     
+    checkmated = True
+    for child in curr_node.children:
+        if child.checkmated == False:
+            checkmated = False
+            break
+
+    if checkmated:
+        curr_node.checkmated = True
+        whosMove = "w" if whosMove == "b" else "b" # Swap
+        return selection(curr_node.parent, playColor, whosMove)
+
     if(playColor == whosMove):
         max_ucb = -100
         selected_child = None
@@ -50,7 +61,7 @@ def expansion(curr_node, moves, chessBoard: list, EnPassant, whosMove):
         curr_node.children.append(newNode)
         newNode.parent = curr_node
 
-        winlet = board.checkmate(chessBoard,whosMove) != False
+        winlet = board.checkmate(newBoard,whosMoveReverse) != False
         if winlet != False:
             if winlet == whosMove:
                 newNode.data = 1
@@ -60,41 +71,47 @@ def expansion(curr_node, moves, chessBoard: list, EnPassant, whosMove):
                 newNode.data = 0
             
             newNode.checkmated = True
+        else:
+            legalMoves = board.find_moves(newBoard,whosMoveReverse,EnPassant)
+            for move2 in legalMoves:
+                newBoard2 = copy.deepcopy(newBoard)
 
-        legalMoves = board.find_moves(newBoard,whosMoveReverse,EnPassant)
-        for move2 in legalMoves:
-            newBoard2 = copy.deepcopy(newBoard)
+                for moves1 in move2:
+                    newBoard2, EnPassant = board.make_move(newBoard2[moves1[0][0]][moves1[0][1]],moves1[1],newBoard2)
+        
+                newNode2 = Node(newBoard2, whosMove, move2)
+                newNode.children.append(newNode2)
+                newNode2.parent = newNode
 
-            for moves1 in move2:
-                newBoard2, EnPassant = board.make_move(newBoard2[moves1[0][0]][moves1[0][1]],moves1[1],newBoard2)
-    
-            newNode2 = Node(newBoard2, whosMove, move2)
-            newNode.children.append(newNode2)
-            newNode2.parent = newNode
-
-            winlet = board.checkmate(chessBoard,whosMove) != False
-            if winlet != False:
-                if winlet == whosMove:
-                    newNode2.data = 1
-                elif winlet == whosMoveReverse:
-                    newNode2.data = -1
-                else:
-                    newNode2.data = 0
-                
-                newNode2.checkmated = True
+                winlet = board.checkmate(newBoard2,whosMove) != False
+                if winlet != False:
+                    if winlet == whosMove:
+                        newNode2.data = 1
+                    elif winlet == whosMoveReverse:
+                        newNode2.data = -1
+                    else:
+                        newNode2.data = 0
+                    
+                    newNode2.checkmated = True
 
     return newNode2
 
-def backpropogation(curr_node: Node, reward, playColor):
+def backpropogation(curr_node: Node, reward):
     addReward = reward
     while(curr_node != None):
-        if(curr_node.whosMove == playColor):
-            addReward = reward
-        else:
-            addReward = -reward
-
         curr_node.data = 4 * (curr_node.data / 5) + addReward / 5
         curr_node.sims += 1
         curr_node = curr_node.parent
+
+        if (curr_node != None):
+            checkmated = True
+            for child in curr_node.children:
+                if not child.checkmated:
+                    checkmated = False
+                    break
+
+            if checkmated:
+                curr_node.checkmated = True
+
 
     return curr_node

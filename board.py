@@ -102,7 +102,7 @@ def checkmate(chessBoard,whosMove):
 
     for row in chessBoard:
         for piece in row:
-            if not isinstance(piece, pieces.Empty):
+            if not isinstance(piece, pieces.Empty) and not isinstance(piece, pieces.Pawn):
                 countAll += 1
             if isinstance(piece, pieces.Bishop):
                 countB += 1

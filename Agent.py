@@ -22,18 +22,18 @@ class Agent:
         EnPassant = exports[3]
 
         for i in range(numIter):
-            curr_node = ai.selection(self.root, self.color, whosMove)
+            curr_node = ai.selection(self.root, self.color, self.color)
 
             legalMoves = board.find_moves(curr_node.chessBoard,whosMove,EnPassant)
 
-            print(board.print_board(curr_node.chessBoard))
             curr_node = ai.expansion(curr_node, legalMoves, curr_node.chessBoard, EnPassant, self.color)
+            print(board.print_board(curr_node.chessBoard))
 
             if (curr_node != None):
                 simBoard = copy.deepcopy(curr_node.chessBoard)
                 reward = self.playChess(simBoard, whosMove, EnPassant)
 
-                ai.backpropogation(curr_node, reward, self.color)
+                ai.backpropogation(curr_node, reward)
 
             exports = fen_setup.setup_fen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
             whosMove = exports[1]
@@ -44,7 +44,7 @@ class Agent:
         stop = False
         move = False
         while not stop:
-            print(board.print_board(chessBoard))
+            #print(board.print_board(chessBoard))
             legalMoves = board.find_moves(chessBoard,whosMove,EnPassant)
 
             """
@@ -208,11 +208,8 @@ class Agent:
     def showWay(self):
         curNode =  self.root
         whosMove = "w"        
-        print(curNode.children != [])
         while curNode.children != []:
             print(board.print_board(curNode.chessBoard))
-            print(curNode.moveFrom)
-            
             if(self.color == whosMove):
                 max_ucb = -100
                 selected_child = None
@@ -230,9 +227,10 @@ class Agent:
                         min_ucb = curr_ucb
                         selected_child = i
 
+            curNode = selected_child
+
             whosMove = "w" if whosMove == "b" else "b" # Swap
 
-            curNode = selected_child
 
 
     
