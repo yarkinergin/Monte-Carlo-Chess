@@ -115,3 +115,18 @@ def backpropogation(curr_node: Node, reward):
 
 
     return curr_node
+
+def firstBlackExpansion(curr_node, EnPassant):
+    newNode = None
+    legalMoves = board.find_moves(curr_node.chessBoard,"w",EnPassant)
+
+    for move in legalMoves:
+        newBoard = copy.deepcopy(curr_node.chessBoard)
+
+        for moves1 in move:
+            newBoard, EnPassant = board.make_move(newBoard[moves1[0][0]][moves1[0][1]],moves1[1],newBoard)
+        
+        newNode = Node(newBoard, "b", move)
+        curr_node.children.append(newNode)
+        newNode.parent = curr_node
+        

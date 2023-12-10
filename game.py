@@ -11,7 +11,7 @@ from Node import Node
 
             
 # Monte Carlo
-agentWhite = Agent.Agent("w")
+agentWhite = Agent.Agent("b")
 agentWhite.train(100)
 print("------------------")
 agentWhite.showWay()

@@ -21,10 +21,13 @@ class Agent:
         # castling = exports[2]
         EnPassant = exports[3]
 
-        for i in range(numIter):
-            curr_node = ai.selection(self.root, self.color, self.color)
+        if (self.color == "b"):
+            ai.firstBlackExpansion(self.root, EnPassant)
 
-            legalMoves = board.find_moves(curr_node.chessBoard,whosMove,EnPassant)
+        for i in range(numIter):
+            curr_node = ai.selection(self.root, self.color, "w")
+
+            legalMoves = board.find_moves(curr_node.chessBoard,self.color,EnPassant)
 
             curr_node = ai.expansion(curr_node, legalMoves, curr_node.chessBoard, EnPassant, self.color)
             print(board.print_board(curr_node.chessBoard))
@@ -210,6 +213,7 @@ class Agent:
         whosMove = "w"        
         while curNode.children != []:
             print(board.print_board(curNode.chessBoard))
+            print(whosMove)
             if(self.color == whosMove):
                 max_ucb = -100
                 selected_child = None
