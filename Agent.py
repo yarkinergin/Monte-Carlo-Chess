@@ -158,6 +158,9 @@ class Agent:
             if whosMove == self.color:
                 self.train(curNode, numIter)
 
+                for child in curNode.children:
+                    print(child.data)
+
                 if(not curNode.children):
                     move = random.choice(legalMoves)
                     print("!!!Random move")
@@ -173,6 +176,9 @@ class Agent:
 
                     curNode = selected_child
                     move = curNode.moveFrom
+
+                    print("********")
+                    print(curNode.data)
 
             else:
                 """

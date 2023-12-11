@@ -62,12 +62,14 @@ def expansion(curr_node, moves, chessBoard: list, EnPassant, whosMove):
         curr_node.children.append(newNode)
         newNode.parent = curr_node
 
-        winlet = board.checkmate(newBoard,whosMoveReverse) != False
+        winlet = board.checkmate(newBoard,whosMoveReverse)
         if winlet != False:
             if winlet == whosMove:
                 newNode.data = 1
+                curr_node.data = 4 * (curr_node.data / 5) + 1 / 5
             elif winlet == whosMoveReverse:
                 newNode.data = -1
+                curr_node.data = 4 * (curr_node.data / 5) - 1 / 5
             else:
                 newNode.data = 0
             
@@ -84,14 +86,16 @@ def expansion(curr_node, moves, chessBoard: list, EnPassant, whosMove):
                 newNode.children.append(newNode2)
                 newNode2.parent = newNode
 
-                winlet = board.checkmate(newBoard2,whosMove) != False
+                winlet = board.checkmate(newBoard2,whosMove)
                 if winlet != False:
                     if winlet == whosMove:
                         newNode2.data = 1
-                        newNode.data = 1
+                        newNode.data = (newNode.data / 5) + 1/5
+                        curr_node.data = 4 * (curr_node.data / 5) + newNode.data / 5
                     elif winlet == whosMoveReverse:
                         newNode2.data = -1
-                        newNode.data = -1
+                        newNode.data = (newNode.data / 5) - 1/5
+                        curr_node.data = 4 * (curr_node.data / 5) - newNode.data / 5
                     else:
                         newNode2.data = 0
                     
