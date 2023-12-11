@@ -128,6 +128,7 @@ class Agent:
         while not stop:
             print(board.print_board(chessBoard))
             legalMoves = board.find_moves(chessBoard,whosMove,EnPassant)
+
             """
             points = 0
             for row in chessBoard:
@@ -158,27 +159,24 @@ class Agent:
             if whosMove == self.color:
                 self.train(curNode, numIter)
 
+                """
                 for child in curNode.children:
                     print(child.data)
-
-                if(not curNode.children):
-                    move = random.choice(legalMoves)
-                    print("!!!Random move")
+                """
                 
-                else:
-                    max_ucb = -100
-                    selected_child = None
-                    for i in curNode.children:
-                        curr_ucb = i.data
-                        if(curr_ucb > max_ucb):
-                            max_ucb = curr_ucb
-                            selected_child = i
+                max_ucb = -100
+                selected_child = None
+                for i in curNode.children:
+                    curr_ucb = i.data
+                    if(curr_ucb > max_ucb):
+                        max_ucb = curr_ucb
+                        selected_child = i
 
-                    curNode = selected_child
-                    move = curNode.moveFrom
+                curNode = selected_child
+                move = curNode.moveFrom
 
-                    print("********")
-                    print(curNode.data)
+                #print("********")
+                #print(curNode.data)
 
             else:
                 """

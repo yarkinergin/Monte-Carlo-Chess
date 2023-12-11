@@ -90,11 +90,11 @@ def expansion(curr_node, moves, chessBoard: list, EnPassant, whosMove):
                 if winlet != False:
                     if winlet == whosMove:
                         newNode2.data = 1
-                        newNode.data = (newNode.data / 5) + 1/5
+                        newNode.data += 1 / len(legalMoves)
                         curr_node.data = 4 * (curr_node.data / 5) + newNode.data / 5
                     elif winlet == whosMoveReverse:
                         newNode2.data = -1
-                        newNode.data = (newNode.data / 5) - 1/5
+                        newNode.data += -1 / len(legalMoves)
                         curr_node.data = 4 * (curr_node.data / 5) - newNode.data / 5
                     else:
                         newNode2.data = 0
