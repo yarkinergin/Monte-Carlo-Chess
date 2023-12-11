@@ -50,6 +50,7 @@ def selection(curr_node, playColor, whosMove):
 def expansion(curr_node, moves, chessBoard: list, EnPassant, whosMove):
     newNode = None
     newNode2 = None
+    prevNode = None
     whosMoveReverse = "w" if whosMove == "b" else "b" # Swap
     for move in moves:
         newBoard = copy.deepcopy(chessBoard)
@@ -87,12 +88,17 @@ def expansion(curr_node, moves, chessBoard: list, EnPassant, whosMove):
                 if winlet != False:
                     if winlet == whosMove:
                         newNode2.data = 1
+                        newNode.data = 1
                     elif winlet == whosMoveReverse:
                         newNode2.data = -1
+                        newNode.data = -1
                     else:
                         newNode2.data = 0
                     
                     newNode2.checkmated = True
+                    newNode2 = prevNode
+                else:
+                    prevNode = newNode2
 
     return newNode2
 

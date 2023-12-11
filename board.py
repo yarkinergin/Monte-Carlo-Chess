@@ -99,8 +99,6 @@ def checkmate(chessBoard,whosMove):
     hasMoves = False
     countB = 0
     countAll = 0
-    countBP = 0
-    countWP = 0
 
     for row in chessBoard:
         for piece in row:
@@ -109,19 +107,14 @@ def checkmate(chessBoard,whosMove):
             if isinstance(piece, pieces.Bishop):
                 countB += 1
             if piece.colour == whosMove: # If white has a piece, it has not lost
-                if isinstance(piece, pieces.Pawn):
-                    countWP += 1
                 hasPieces = True
                 if piece.captures(chessBoard) != [] or piece.moves(chessBoard) != []:
                     hasMoves = True
-            else:
-                if isinstance(piece, pieces.Pawn):
-                    countBP += 1
 
     if not hasPieces or not hasMoves:
         return whosMove
     
-    if countB == 2 and countAll == 2 and countBP == countWP:
+    if countB <= 2 and countAll == countB:
         return "d"
     
     return False

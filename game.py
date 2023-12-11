@@ -12,9 +12,8 @@ from Node import Node
             
 # Monte Carlo
 agentWhite = Agent.Agent("b")
-agentWhite.train(100)
 print("------------------")
-agentWhite.showWay()
+agentWhite.playHuman(100)
 """
 exports = fen_setup.setup_fen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
 chessBoard = exports[0]

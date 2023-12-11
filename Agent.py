@@ -15,33 +15,29 @@ class Agent:
 
         self.root = Node.Node(chessBoard, color, 0)
 
-    def train(self, numIter):
-        exports = fen_setup.setup_fen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
-        whosMove = exports[1]
-        # castling = exports[2]
-        EnPassant = exports[3]
+    def train(self, curNode, numIter):
+        whosMove = self.color
+        EnPassant = "-"
 
-        if (self.color == "b"):
-            ai.firstBlackExpansion(self.root, EnPassant)
-
+        """
+        if (self.color == "b" and firtsTime):
+            ai.firstBlackExpansion(curNode, EnPassant)
+        """
         for i in range(numIter):
-            curr_node = ai.selection(self.root, self.color, "w")
+            curr_node = ai.selection(curNode, self.color, whosMove)
 
             legalMoves = board.find_moves(curr_node.chessBoard,self.color,EnPassant)
 
             curr_node = ai.expansion(curr_node, legalMoves, curr_node.chessBoard, EnPassant, self.color)
-            print(board.print_board(curr_node.chessBoard))
 
             if (curr_node != None):
+                #print(board.print_board(curr_node.chessBoard))
                 simBoard = copy.deepcopy(curr_node.chessBoard)
                 reward = self.playChess(simBoard, whosMove, EnPassant)
 
                 ai.backpropogation(curr_node, reward)
 
-            exports = fen_setup.setup_fen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
-            whosMove = exports[1]
-            # castling = exports[2]
-            EnPassant = exports[3]
+            whosMove = self.color
 
     def playChess(self, chessBoard, whosMove, EnPassant):
         stop = False
@@ -96,7 +92,7 @@ class Agent:
             #     castling = board.castling_rights(chessBoard,whosMove,castling)
             whosMove = "w" if whosMove == "b" else "b" # Swap
             if board.checkmate(chessBoard,whosMove) != False:
-                print(board.print_board(chessBoard))
+                #print(board.print_board(chessBoard))
                 winLet = board.checkmate(chessBoard,whosMove) 
                 if winLet == "w":
                     winner = 'White' 
@@ -105,16 +101,17 @@ class Agent:
                 else:
                     winner = 'Draw!! No one'
                 
-                print(f'{winner} has won the game!')
+                revcolor = "w" if self.color == "b" else "b" # Swap
+                #print(f'{winner} has won the game!')
                 stop = True
-                if (winLet == "w"):
+                if (winLet == self.color):
                     return 1
-                elif (winLet == "b"):
+                elif (winLet == revcolor):
                     return -1
                 else:
                     return 0
                 
-    def playHuman(self):
+    def playHuman(self, numIter):
         exports = fen_setup.setup_fen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
         chessBoard = exports[0]
         whosMove = exports[1]
@@ -122,6 +119,10 @@ class Agent:
         EnPassant = exports[3]
 
         curNode =  self.root
+
+        if (self.color == "b"):
+            ai.firstBlackExpansion(curNode, EnPassant)
+
         stop = False
         move = False
         while not stop:
@@ -155,6 +156,8 @@ class Agent:
 
             # Computer plays black
             if whosMove == self.color:
+                self.train(curNode, numIter)
+
                 if(not curNode.children):
                     move = random.choice(legalMoves)
                     print("!!!Random move")
@@ -170,15 +173,18 @@ class Agent:
 
                     curNode = selected_child
                     move = curNode.moveFrom
-        
+
             else:
+                """
                 while move == False:
                     move = board.convert_user_coords(input('>> '),chessBoard,whosMove,EnPassant)
                     if move not in legalMoves:
                         move = False
                     if move == False:
                         print("That's an illegal move. Try again.")
-                    
+                """
+                move = ai.ai(legalMoves,chessBoard)
+                
                 for child in curNode.children:
                     if child.moveFrom == move:
                         curNode = child
