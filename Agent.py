@@ -4,7 +4,7 @@ import fen_setup
 import ai
 import board
 import copy
-import pieces
+import aiH
 
 class Agent:
     def __init__(self, color):
@@ -187,14 +187,15 @@ class Agent:
                     if move == False:
                         print("That's an illegal move. Try again.")
                 """
-                move = ai.ai(legalMoves,chessBoard)
-                
+                #move = ai.ai(legalMoves,chessBoard)
+                move = aiH.ai(legalMoves,chessBoard,EnPassant,whosMove)
+
                 for child in curNode.children:
                     if child.moveFrom == move:
                         curNode = child
-
-            for moves in move:
-                chessBoard, EnPassant = board.make_move(chessBoard[moves[0][0]][moves[0][1]],moves[1],chessBoard)
+            if move:
+                for moves in move:
+                    chessBoard, EnPassant = board.make_move(chessBoard[moves[0][0]][moves[0][1]],moves[1],chessBoard)
             move = False
             # if castling != '':
             #     castling = board.castling_rights(chessBoard,whosMove,castling)

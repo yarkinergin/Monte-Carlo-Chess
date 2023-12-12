@@ -114,7 +114,7 @@ def checkmate(chessBoard,whosMove):
     if not hasPieces or not hasMoves:
         return whosMove
     
-    if countB <= 2 and countAll == countB:
+    if countB > 0 and countAll == countB:
         return "d"
     
     return False

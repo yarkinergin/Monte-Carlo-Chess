@@ -2,26 +2,60 @@ import random
 import board
 import pieces
 import copy
-whosMove = "b"
+whosMoveAI = "b"
 
-def evaluate_board(boardNew):
-    return 0
+def changeWhosMove(whosMove):
+    if(whosMove == 'w'):
+        return 'b'
+    else:
+        return 'w'
 
-def minimax(boardNew, depth, alpha, beta, maximizing_player, EnPassantAI):
+def evaluate_board(boardNew,whosMove):
+    points = 0
+    if(board.checkmate(boardNew, whosMoveAI)):
+        points = 100
+        return points
+    if(board.checkmate(boardNew, whosMoveAI)):
+        points = -100
+        return points
+    for row in boardNew:
+        for piece in row:
+            if piece.colour == whosMove:
+                if isinstance(piece, pieces.Pawn):
+                    points -= 1
+                if isinstance(piece, pieces.Rook):
+                    points -= 5
+                if isinstance(piece, pieces.Knight) or isinstance(piece, pieces.Bishop):
+                    points -= 3
+                if isinstance(piece, pieces.Queen):
+                    points -= 9
+            if piece.colour != whosMove:
+                if isinstance(piece, pieces.Pawn):
+                    points += 1
+                if isinstance(piece, pieces.Rook):
+                    points += 5
+                if isinstance(piece, pieces.Knight) or isinstance(piece, pieces.Bishop):
+                    points += 3
+                if isinstance(piece, pieces.Queen):
+                    points += 9      
+    return points
+
+def minimax(boardNew, depth, alpha, beta, maximizing_player, EnPassantAI,whosMove):
     boardOld = copy.deepcopy(boardNew)
-    if depth == 0 or board.checkmate(boardNew, whosMove):
-        return None, evaluate_board(boardNew)
+    if depth == 0 or board.checkmate(boardNew, "b") or board.checkmate(boardNew, "w"):
+        return None, evaluate_board(boardNew,whosMove)
     
     moves = board.find_moves(boardNew,whosMove,EnPassantAI)
-    bestMove = random.choice(moves)
-    
+    #bestMove = random.choice(moves)
+    bestMove = moves[0]
     if maximizing_player:
         max_eval = float('-inf')
         for move in moves:
             boardNew = copy.deepcopy(boardOld)
             for moves2 in move:
                 new_board, EnPassantAI = moveai(moves2, boardNew)
-            evaluation = minimax(new_board, depth - 1, alpha, beta, False,EnPassantAI)[1]
+            whosMove = changeWhosMove(whosMove)
+            evaluation = minimax(new_board, depth - 1, alpha, beta, False,EnPassantAI,whosMove)[1]
             if evaluation > max_eval:
                 max_eval = evaluation
                 bestMove = move
@@ -35,7 +69,8 @@ def minimax(boardNew, depth, alpha, beta, maximizing_player, EnPassantAI):
             boardNew = copy.deepcopy(boardOld)
             for moves2 in move:
                 new_board, EnPassantAI = moveai(moves2, boardNew)
-            evaluation = minimax(new_board, depth - 1, alpha, beta, True, EnPassantAI)[1]
+            whosMove = changeWhosMove(whosMove)
+            evaluation = minimax(new_board, depth - 1, alpha, beta, True, EnPassantAI,whosMove)[1]
             if evaluation < min_eval:
                 min_eval = evaluation
                 bestMove = move
@@ -44,11 +79,13 @@ def minimax(boardNew, depth, alpha, beta, maximizing_player, EnPassantAI):
                 break
         return bestMove, min_eval
 
-def ai(moves, chessBoard, EnPassant):
+def ai(moves, chessBoard, EnPassant,whosMove):
     EnPassantAI = EnPassant
     alpha = float('-inf')
     beta = float('inf')
-    return minimax(chessBoard, 6, alpha, beta, True, EnPassantAI)[0]
+    bestMove, max = minimax(chessBoard, 5, alpha, beta, True, EnPassantAI,whosMove)
+    print("max: ", max)
+    return bestMove
 
 
 def moveai(moves2, boardNew):
