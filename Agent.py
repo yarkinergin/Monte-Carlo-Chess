@@ -244,7 +244,3 @@ class Agent:
             curNode = selected_child
 
             whosMove = "w" if whosMove == "b" else "b" # Swap
-
-
-
-    

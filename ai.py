@@ -104,6 +104,17 @@ def expansion(curr_node, moves, chessBoard: list, EnPassant, whosMove):
                 else:
                     prevNode = newNode2
 
+    if newNode2 != None:
+        nodes = []
+        for child in curr_node.children:
+            if child.children != []:
+                for gchild in child.children:
+                    if gchild.data == 0:
+                        nodes.append(gchild)
+        
+        newNode2 = random.choice(nodes)
+
+
     return newNode2
 
 def backpropogation(curr_node: Node, reward):
