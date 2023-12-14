@@ -2,7 +2,7 @@ import random
 import board
 import pieces
 import copy
-whosMoveAI = "b"
+whosMoveAI = "w"
 
 def changeWhosMove(whosMove):
     if(whosMove == 'w'):
