@@ -158,8 +158,25 @@ class Agent:
             # Computer plays black
             if whosMove == self.color:
                
-                move = self.makeMove(curNode, chessBoard, numIter)
+                
+                        
+                self.train(curNode, numIter)
 
+                """
+                for child in curNode.children:
+                    print(child.data)
+                """
+                
+                max_ucb = -100
+                selected_child = None
+                for i in curNode.children:
+                    curr_ucb = i.data
+                    if(curr_ucb > max_ucb):
+                        max_ucb = curr_ucb
+                        selected_child = i
+
+                curNode = selected_child
+                move = curNode.moveFrom
                 #print("********")
                 #print(curNode.data)
 
@@ -175,6 +192,9 @@ class Agent:
                 #move = ai.ai(legalMoves,chessBoard)
                 move = aiH.ai(legalMoves,chessBoard,EnPassant, "w")
 
+                for child in curNode.children:
+                    if child.moveFrom == move:
+                        curNode = child
                 
             if move:
                 for moves in move:
@@ -228,27 +248,3 @@ class Agent:
             curNode = selected_child
 
             whosMove = "w" if whosMove == "b" else "b" # Swap
-
-    def makeMove(self, curNode, chessBoard, numIter):
-        for child in curNode.children:
-            if child.chessBoard == chessBoard:
-                curNode = child
-                
-        self.train(curNode, numIter)
-
-        """
-        for child in curNode.children:
-            print(child.data)
-        """
-        
-        max_ucb = -100
-        selected_child = None
-        for i in curNode.children:
-            curr_ucb = i.data
-            if(curr_ucb > max_ucb):
-                max_ucb = curr_ucb
-                selected_child = i
-
-        curNode = selected_child
-        move = curNode.moveFrom
-        return move
